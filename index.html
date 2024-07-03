@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #game-container {
+            position: relative;
+        }
+        #box {
+            width: 10vw; /* Responsive width */
+            height: 10vw; /* Responsive height */
+            background-color: rgb(235, 158, 49);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: white;
+            border-radius: 5px;
+        }
+        #scoreDisplay {
+            position: absolute;
+            top: 20px;
+            left: 600px;
+            font-size: 1rem;
+        }
+        #history {
+            position: absolute;
+            top: 300px;
+            right: 20px;
+            font-size: 0.8rem;
+            text-align: right;
+            background-color: orange;
+            padding: 5px;
+            border-radius: 5px;
+            visibility: visible;
+            display: flex;
+            flex-direction: column; /* Display history in a column */
+            list-style-type:none;
+        }
+        #shadow {
+          width: 10vw; /* Responsive width */
+          height: 10vw; /* Responsive height */
+          background-color: rgb(244, 219, 185);
+          position: absolute;
+          cursor: pointer;
+          right:-25px;
+          top:-25px;
+          border-radius: 5px;
+          z-index: -1;
+          
+          
+         
+
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="box" >Click Me!</div>
+        <div id="shadow"></div>
+    </div>
+    <div id="scoreDisplay">Score: 0
+
+    </div>
+     <div id="history">history
+        </div>
+    <script>
+        let score = 0;
+        let highScore = 0;
+        let startTime = null;
+        let timer;
+        const history = [];
+
+        const box = document.getElementById("box");
+        const scoreDisplay = document.getElementById("scoreDisplay");
+        const historyDisplay = document.getElementById("history");
+
+        box.addEventListener("click", () => {
+            if (startTime === null) {
+                startTime = Date.now();
+                timer = setInterval(updateTimer, 1000);
+            }
+            if (Date.now() - startTime < 15000) {
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                box.textContent = `Score: ${score}`;
+            }
+        });
+
+        function updateTimer() {
+            const currentTime = Date.now();
+            const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+            if (elapsedTime >= 15) {
+                clearInterval(timer);
+                box.style.pointerEvents = "none"; // Disable clicks
+                history.push(score);
+                historyDisplay.textContent = `History: ${history.join("\n")}`; // Display history in a column
+                setTimeout(resetGame, 2000); // Reset game after 2 seconds
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            startTime = null;
+            box.style.pointerEvents = "auto"; // Enable clicks
+            scoreDisplay.textContent = "Score: 0";
+            box.textContent = "Click Me!";
+            // Do not clear historyDisplay; it remains visible
+        }
+    </script>
+</body>
+</html>
